@@ -1,28 +1,38 @@
-import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import { authApi } from '@/api/endpoints';
-import { extractApiError } from '@/api/client';
-import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { authApi } from "@/api/endpoints";
+import { extractApiError } from "@/api/client";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { loginSchema, type LoginValues } from "@/validation/loginValidation";
+
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const { setAuthToken } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as any)?.from?.pathname ?? '/';
+  const from = (location.state as any)?.from?.pathname ?? "/";
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
   const mutation = useMutation({
-    mutationFn: () => authApi.login(email, password),
+    mutationFn: (values: LoginValues) => authApi.login(values.email, values.password),
     onSuccess: (data) => {
       setAuthToken(data.token);
-      toast.success('Welcome back');
+      toast.success("Welcome back");
       navigate(from, { replace: true });
     },
-    onError: (err) => toast.error(extractApiError(err, 'Login failed')),
+    onError: (err) => toast.error(extractApiError(err, "Login failed")),
   });
 
   return (
@@ -30,41 +40,45 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <div className="mx-auto grid size-12 place-items-center rounded-xl bg-primary text-primary-foreground text-xl font-bold">
-            K
+            ₲
           </div>
           <h1 className="mt-4 text-2xl font-semibold">Welcome back</h1>
-          <p className="text-sm text-muted-foreground">
-            Sign in to your wallet
-          </p>
+          <p className="text-sm text-muted-foreground">Sign in to your wallet</p>
         </div>
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            mutation.mutate();
-          }}
+          onSubmit={handleSubmit((values) => mutation.mutate(values))}
+          noValidate
           className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-4"
         >
           <div>
-            <label className="text-sm font-medium">Email</label>
+            <label className="text-sm font-medium" htmlFor="email">Email</label>
             <input
+              id="email"
               type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              {...register("email")}
+              aria-invalid={!!errors.email}
               className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
               placeholder="you@example.com"
             />
+            {errors.email && (
+              <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>
+            )}
           </div>
           <div>
-            <label className="text-sm font-medium">Password</label>
+            <label className="text-sm font-medium" htmlFor="password">Password</label>
             <input
+              id="password"
               type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              {...register("password")}
+              aria-invalid={!!errors.password}
               className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
               placeholder="••••••••"
             />
+            {errors.password && (
+              <p className="mt-1 text-xs text-destructive">{errors.password.message}</p>
+            )}
           </div>
           <button
             type="submit"
@@ -75,11 +89,8 @@ export default function Login() {
             Sign in
           </button>
           <p className="text-center text-sm text-muted-foreground">
-            Don't have an account?{' '}
-            <Link
-              to="/signup"
-              className="text-primary font-medium hover:underline"
-            >
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-primary font-medium hover:underline">
               Sign up
             </Link>
           </p>
