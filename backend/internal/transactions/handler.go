@@ -26,20 +26,23 @@ func (h *Handler) List(c *gin.Context) {
 	page, _ := strconv.Atoi(pageStr)
 	limit, _ := strconv.Atoi(limitStr)
 
-	txs, err := h.service.List(c.Request.Context(), userID, page, limit)
+	txs, total, err := h.service.List(c.Request.Context(), userID, page, limit)
 	if err != nil {
 		log.Printf("Error fetching transactions: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch transactions"})
 		return
 	}
 
 	if txs == nil {
 		txs = []Transaction{}
 	}
+	totalPages := (total + limit - 1) / limit
 
 	c.JSON(http.StatusOK, gin.H{
-		"data":  txs,
-		"page":  page,
-		"limit": limit,
+		"data":       txs,
+		"page":       page,
+		"limit":      limit,
+		"total":      total,
+		"totalPages": totalPages,
 	})
 }

@@ -55,6 +55,19 @@ func (r *Repository) GetTransactions(ctx context.Context, userID string, limit, 
 	return txs, nil
 }
 
+func (r *Repository) CountByUser(ctx context.Context, userID string) (int, error) {
+	var count int
+
+	query := `SELECT COUNT(*) FROM transactions WHERE user_id = $1`
+
+	err := r.db.QueryRowContext(ctx, query, userID).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 func (r *Repository) Create(
 	ctx context.Context,
 	tx *sql.Tx,
