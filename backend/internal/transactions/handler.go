@@ -34,9 +34,7 @@ func (h *Handler) List(c *gin.Context) {
 	}
 
 	if txs == nil {
-		c.JSON(http.StatusOK, gin.H{"data": []Transaction{}, "page": page,
-			"limit": limit})
-		return
+		txs = []Transaction{}
 	}
 
 	c.JSON(http.StatusOK, gin.H{

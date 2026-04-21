@@ -15,14 +15,14 @@ func NewHandler(service *Service) *Handler {
 }
 
 type signupDTO struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 type loginDTO struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 func (h *Handler) Signup(c *gin.Context) {

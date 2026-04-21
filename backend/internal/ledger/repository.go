@@ -14,7 +14,7 @@ func NewRepository(db *sql.DB) *Repository {
 }
 
 // Insert entries (used in transactions)
-func (r *Repository) InsertEntries(ctx context.Context, tx *sql.Tx, entries []Entry) error {
+func (r *Repository) InsertEntries(ctx context.Context, tx *sql.Tx, entries []LedgerEntry) error {
 
 	query := `
 		INSERT INTO ledger_entries (id, user_id, currency, amount, type, ref_type, ref_id, created_at)

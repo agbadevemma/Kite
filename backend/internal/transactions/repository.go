@@ -54,3 +54,28 @@ func (r *Repository) GetTransactions(ctx context.Context, userID string, limit, 
 
 	return txs, nil
 }
+
+func (r *Repository) Create(
+	ctx context.Context,
+	tx *sql.Tx,
+	t TransactionRecord,
+) error {
+
+	query := `
+		INSERT INTO transactions
+		(id, user_id, type, status, currency, amount, ref_id)
+		VALUES ($1,$2,$3,$4,$5,$6,$7)
+	`
+
+	_, err := tx.ExecContext(ctx, query,
+		t.ID,
+		t.UserID,
+		t.Type,
+		t.Status,
+		t.Currency,
+		t.Amount,
+		t.RefID,
+	)
+
+	return err
+}
