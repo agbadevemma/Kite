@@ -16,7 +16,7 @@ export const authApi = {
 
 
 export const walletApi = {
-  getWallet: () => api.get<Wallet>("/wallet").then((r) => r.data),
+  getWallet: () => api.get<Wallet>("/wallet/balances").then((r) => r.data),
 };
 
 

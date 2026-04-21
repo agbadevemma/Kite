@@ -20,6 +20,7 @@ export default function Dashboard() {
   });
 
   const balanceMap = new Map(wallet.data?.balances.map((b) => [b.currency, b.amount]));
+console.log(txs?.data?.data);
 
   return (
     <div className="space-y-8">
@@ -98,12 +99,12 @@ export default function Dashboard() {
               <ErrorState message={extractApiError(txs.error, "Failed to load transactions")} />
             </div>
           )}
-          {txs.data && txs.data.data.length === 0 && (
+          {txs.data && txs.data.data?.length === 0 && (
             <div className="p-8 text-center text-sm text-muted-foreground">
               No transactions yet
             </div>
           )}
-          {txs.data && txs.data.data.length > 0 && (
+          {txs?.data && txs.data?.data?.length > 0 && (
             <ul className="divide-y divide-border">
               {txs.data.data.map((t) => (
                 <li key={t.id} className="flex items-center justify-between gap-4 px-4 py-3">
