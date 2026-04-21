@@ -18,6 +18,7 @@ func NewService(repo *Repository) *Service {
 }
 
 type SignupRequest struct {
+	Name     string
 	Email    string
 	Password string
 }
@@ -41,6 +42,7 @@ func (s *Service) Signup(ctx context.Context, req SignupRequest) (*User, error) 
 
 	user := User{
 		ID:        uuid.NewString(),
+		Name:      req.Name,
 		Email:     req.Email,
 		Password:  string(hashedPassword),
 		CreatedAt: time.Now(),
