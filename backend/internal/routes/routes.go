@@ -18,7 +18,7 @@ func SetupRoutes(r *gin.Engine, db *sql.DB) {
 	healthHandler := health.NewHandler(db)
 	r.GET("/health", healthHandler.Health)
 
-	// GROUPS
+
 	api := r.Group("/api")
 
 	authRoutes := api.Group("/auth")
