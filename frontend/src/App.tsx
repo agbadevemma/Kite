@@ -8,6 +8,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Deposit from "./pages/Deposit";
 
 function App() {
   const queryClient = new QueryClient({
@@ -25,6 +26,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/deposit" element={<ProtectedRoute><Deposit  /></ProtectedRoute>} />
+    
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
