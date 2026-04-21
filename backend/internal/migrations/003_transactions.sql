@@ -1,6 +1,6 @@
 CREATE TABLE transactions (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL,
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL,
     type TEXT NOT NULL,              -- deposit | conversion | payout
     status TEXT NOT NULL,            -- pending | processing | completed | failed
 
