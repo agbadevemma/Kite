@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,7 @@ func (h *Handler) GetBalances(c *gin.Context) {
 
 	balances, err := h.service.GetBalances(c.Request.Context(), userID)
 	if err != nil {
-		
+		log.Printf("Error fetching balances for user %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch balances"})
 		return
 	}

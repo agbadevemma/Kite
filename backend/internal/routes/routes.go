@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/himarnoel/kite/internal/auth"
+	"github.com/himarnoel/kite/internal/conversion"
 	"github.com/himarnoel/kite/internal/deposit"
 	"github.com/himarnoel/kite/internal/health"
 	"github.com/himarnoel/kite/internal/ledger"
@@ -16,8 +17,6 @@ import (
 func SetupRoutes(r *gin.Engine, db *sql.DB) {
 	// INIT  MODULE
 	ledgerRepo := ledger.NewRepository(db)
-	
-	
 
 	// HEALTH CHECK
 	healthHandler := health.NewHandler(db)
@@ -29,7 +28,7 @@ func SetupRoutes(r *gin.Engine, db *sql.DB) {
 	authRepo := auth.NewRepository(db)
 	authService := auth.NewService(authRepo)
 	authHandler := auth.NewHandler(authService)
-	
+
 	authRoutes := api.Group("/auth")
 	{
 		authRoutes.POST("/signup", authHandler.Signup)
@@ -58,4 +57,14 @@ func SetupRoutes(r *gin.Engine, db *sql.DB) {
 
 	api.POST("/deposits", middleware.AuthMiddleware(), depositHandler.Create)
 
+	// CONVERSION
+	convRepo := conversion.NewRepository(db)
+	convService := conversion.NewService(convRepo, ledgerRepo, db)
+	convHandler := conversion.NewHandler(convService)
+	conversionRoutes := api.Group("/conversions")
+	conversionRoutes.Use(middleware.AuthMiddleware())
+	{
+		conversionRoutes.POST("/quote", convHandler.Quote)
+	conversionRoutes.POST("/execute", convHandler.Execute)
+}
 }
