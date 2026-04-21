@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -30,7 +31,13 @@ func GenerateToken(userID, email string) (string, error) {
 }
 
 func ValidateToken(tokenStr string) (*Claims, error) {
+
 	token, err := jwt.ParseWithClaims(tokenStr, &Claims{}, func(t *jwt.Token) (any, error) {
+
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("invalid signing method")
+		}
+
 		return jwtSecret, nil
 	})
 
@@ -39,8 +46,12 @@ func ValidateToken(tokenStr string) (*Claims, error) {
 	}
 
 	claims, ok := token.Claims.(*Claims)
-	if !ok || !token.Valid {
-		return nil, err
+	if !ok {
+		return nil, fmt.Errorf("invalid token claims")
+	}
+
+	if !token.Valid {
+		return nil, fmt.Errorf("invalid token")
 	}
 
 	return claims, nil
