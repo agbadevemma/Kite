@@ -9,6 +9,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Deposit from "./pages/Deposit";
+import Payout from "./pages/Payout";
+import Convert from "./pages/Convert";
+import Transactions from "./pages/Transactions";
+
 
 function App() {
   const queryClient = new QueryClient({
@@ -27,7 +31,9 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/deposit" element={<ProtectedRoute><Deposit  /></ProtectedRoute>} />
-    
+              <Route path="/convert" element={<ProtectedRoute><Convert /></ProtectedRoute>} />
+              <Route path="/payout" element={<ProtectedRoute><Payout /></ProtectedRoute>} />
+               <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
