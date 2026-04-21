@@ -17,9 +17,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border bg-card sticky top-0 z-30">
-        <div className="container flex h-16 items-center justify-between gap-4">
+    <div className="min-h-screen bg-background text-foreground w-full">
+      <header className="border-b border-border bg-card sticky top-0 z-30 ">
+        <div className="container mx-auto flex h-16 items-center justify-between gap-4">
           <button
             onClick={() => navigate("/")}
             className="flex items-center gap-2 font-semibold text-lg"
@@ -27,7 +27,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <span className="grid size-8 place-items-center rounded-md bg-primary text-primary-foreground">
               ₲
             </span>
-            <span>Greylike</span>
+            <span>Kite</span>
           </button>
           <nav className="hidden md:flex items-center gap-1">
             {nav.map((n) => {
@@ -82,7 +82,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </nav>
       </header>
-      <main className="container py-8">{children}</main>
+      <main className="container py-8 mx-auto">{children}</main>
     </div>
   );
 }
