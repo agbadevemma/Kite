@@ -375,7 +375,7 @@ The system enforces:
 | ------ | ---------------------- | ------------------ |
 | POST   | `/auth/signup`         | Register user      |
 | POST   | `/auth/login`          | Authenticate user  |
-| GET    | `/balances`            | Get balances       |
+| GET    | `/wallet/balances`            | Get balances       |
 | POST   | `/deposits`            | Create deposit     |
 | POST   | `/conversions/quote`   | Create FX quote    |
 | POST   | `/conversions/execute` | Execute conversion |
