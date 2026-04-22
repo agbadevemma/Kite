@@ -15,7 +15,7 @@ func NewRepository(db *sql.DB) *Repository {
 
 func (r *Repository) CreateQuote(ctx context.Context, q Quote) error {
 	query := `
-	INSERT INTO conversion_quotes
+	INSERT INTO  conversions
 	(id, user_id, from_currency, to_currency, rate, amount_in, amount_out, fee, expires_at, created_at)
 	VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
 	`

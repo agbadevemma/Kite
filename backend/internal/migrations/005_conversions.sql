@@ -3,14 +3,15 @@ CREATE TABLE conversions (
     
     user_id UUID NOT NULL,
 
-    from_currency TEXT,
-    to_currency TEXT,
+    from_currency TEXT NOT NULL,
+    to_currency TEXT NOT NULL,
 
-    rate NUMERIC,
-    amount_in BIGINT,
-    amount_out BIGINT,
+    rate NUMERIC NOT NULL,
+    amount_in BIGINT NOT NULL,
+    amount_out BIGINT NOT NULL,
+    fee BIGINT NOT NULL,
 
-    expires_at TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
 
     CONSTRAINT fk_conversions_user
