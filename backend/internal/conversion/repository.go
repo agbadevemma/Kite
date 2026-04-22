@@ -9,7 +9,6 @@ type Repository struct {
 	db *sql.DB
 }
 
-
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
@@ -29,7 +28,6 @@ func (r *Repository) CreateQuote(ctx context.Context, q Quote) error {
 
 	return err
 }
-
 
 func (r *Repository) GetQuote(ctx context.Context, id string) (*Quote, error) {
 	query := `

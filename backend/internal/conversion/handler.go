@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 type Handler struct {
 	service *Service
 }
@@ -14,7 +13,6 @@ type Handler struct {
 func NewHandler(s *Service) *Handler {
 	return &Handler{service: s}
 }
-
 
 func (h *Handler) Quote(c *gin.Context) {
 

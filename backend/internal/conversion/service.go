@@ -25,7 +25,6 @@ func NewService(r *Repository, lw ledger.LedgerWriter, db *sql.DB) *Service {
 	}
 }
 
-
 func (s *Service) Quote(ctx context.Context, userID, from, to string, amount int64) (*Quote, error) {
 
 	if from == to {
@@ -61,7 +60,6 @@ func (s *Service) Quote(ctx context.Context, userID, from, to string, amount int
 	return quote, nil
 }
 
-
 func (s *Service) Execute(ctx context.Context, quoteID string) error {
 
 	quote, err := s.repo.GetQuote(ctx, quoteID)
@@ -78,31 +76,31 @@ func (s *Service) Execute(ctx context.Context, quoteID string) error {
 		return err
 	}
 	defer tx.Rollback()
-	
-		entries := []ledger.LedgerEntry{
+
+	entries := []ledger.LedgerEntry{
 		{
-			ID:       uuid.NewString(),
-			UserID:   quote.UserID,
-			Currency: quote.FromCurrency,
-			Amount:   quote.AmountIn,
-			Type:     "debit",
-			RefType:  "conversion",
-			RefID:    quote.ID,
+			ID:        uuid.NewString(),
+			UserID:    quote.UserID,
+			Currency:  quote.FromCurrency,
+			Amount:    quote.AmountIn,
+			Type:      "debit",
+			RefType:   "conversion",
+			RefID:     quote.ID,
 			CreatedAt: time.Now(),
 		},
 		{
-			ID:       uuid.NewString(),
-			UserID:   quote.UserID,
-			Currency: quote.ToCurrency,
-			Amount:   quote.AmountOut,
-			Type:     "credit",
-			RefType:  "conversion",
-			RefID:    quote.ID,
+			ID:        uuid.NewString(),
+			UserID:    quote.UserID,
+			Currency:  quote.ToCurrency,
+			Amount:    quote.AmountOut,
+			Type:      "credit",
+			RefType:   "conversion",
+			RefID:     quote.ID,
 			CreatedAt: time.Now(),
 		},
 	}
 
-		err = s.ledgerWriter.InsertEntries(ctx, tx, entries)
+	err = s.ledgerWriter.InsertEntries(ctx, tx, entries)
 	if err != nil {
 		return err
 	}
