@@ -4,9 +4,8 @@ CREATE TABLE payouts (
     amount BIGINT NOT NULL,
     currency TEXT NOT NULL,
     status TEXT NOT NULL,
-    account_number TEXT,
-    bank_code TEXT,
-    account_name TEXT,
+    destination TEXT NOT NULL,
+    idempotency_key TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
 
     CONSTRAINT fk_payouts_user
