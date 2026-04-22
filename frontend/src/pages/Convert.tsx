@@ -173,7 +173,7 @@ export default function Convert() {
             <Row label="You receive" value={formatMoney(quote.amount_out, quote.to_currency)} highlight />
             <Row
               label="Rate"
-              value={`1 ${quote.from_currency} = ${quote.rate} ${quote.to_currency}`}
+              value={`1 ${quote.from_currency} = ${quote.rate.toLocaleString()} ${quote.to_currency}`}
             />
             <Row label="Fee" value={formatMoney(quote.fee, quote.from_currency)} />
           </div>

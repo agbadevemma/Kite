@@ -22,9 +22,7 @@ export default function Payout() {
     defaultValues: {
       sourceCurrency: "USD",
       amount: undefined as unknown as number,
-      accountName: "",
       accountNumber: "",
-      bankCode: "",
     },
   });
 
@@ -34,17 +32,14 @@ export default function Payout() {
         sourceCurrency: values.sourceCurrency as Currency,
         amount: values.amount,
         accountNumber: values.accountNumber,
-        bankCode: values.bankCode,
-        accountName: values.accountName,
       }),
     onSuccess: (_d, values) => {
       toast.success("Payout initiated");
       reset({
         sourceCurrency: values.sourceCurrency,
         amount: undefined as unknown as number,
-        accountName: "",
         accountNumber: "",
-        bankCode: "",
+   
       });
       qc.invalidateQueries({ queryKey: ["wallet"] });
       qc.invalidateQueries({ queryKey: ["transactions"] });
@@ -108,20 +103,8 @@ export default function Payout() {
             )}
           </div>
         </div>
-        <div>
-          <label className="text-sm font-medium" htmlFor="accountName">Account name</label>
-          <input
-            id="accountName"
-            {...register("accountName")}
-            aria-invalid={!!errors.accountName}
-            className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            placeholder="Jane Doe"
-          />
-          {errors.accountName && (
-            <p className="mt-1 text-xs text-destructive">{errors.accountName.message}</p>
-          )}
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+       
+       
           <div>
             <label className="text-sm font-medium" htmlFor="accountNumber">Account number</label>
             <input
@@ -136,20 +119,7 @@ export default function Payout() {
               <p className="mt-1 text-xs text-destructive">{errors.accountNumber.message}</p>
             )}
           </div>
-          <div>
-            <label className="text-sm font-medium" htmlFor="bankCode">Bank code</label>
-            <input
-              id="bankCode"
-              {...register("bankCode")}
-              aria-invalid={!!errors.bankCode}
-              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-              placeholder="044"
-            />
-            {errors.bankCode && (
-              <p className="mt-1 text-xs text-destructive">{errors.bankCode.message}</p>
-            )}
-          </div>
-        </div>
+         
         <button
           type="submit"
           disabled={mutation.isPending}

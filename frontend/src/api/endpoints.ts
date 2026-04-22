@@ -37,13 +37,16 @@ export const conversionsApi = {
 };
 
 export const payoutsApi = {
-  createPayout: (params: {
+  createPayout: (payload: {
     sourceCurrency: Currency;
     amount: number;
     accountNumber: string;
-    bankCode: string;
-    accountName: string;
-  }) => api.post<Transaction>("/payouts", params).then((r) => r.data),
+  }) => api.post<Transaction>("/payouts/", {
+    currency: payload.sourceCurrency,
+    amount: payload.amount,
+    destination:payload.accountNumber,
+    idempotency_key: crypto.randomUUID(),
+  }).then((r) => r.data),
 };
 
   
