@@ -21,4 +21,5 @@ type LedgerEntry struct {
 
 type LedgerWriter interface {
 	InsertEntries(ctx context.Context, tx *sql.Tx, entries []LedgerEntry) error
+	GetBalance(ctx context.Context, userID, currency string) (int64, error)
 }

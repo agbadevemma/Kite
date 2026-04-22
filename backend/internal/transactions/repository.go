@@ -52,6 +52,10 @@ func (r *Repository) GetTransactions(ctx context.Context, userID string, limit, 
 		txs = append(txs, t)
 	}
 
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	
 	return txs, nil
 }
 

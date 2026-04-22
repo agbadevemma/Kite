@@ -10,6 +10,7 @@ import (
 	"github.com/himarnoel/kite/internal/health"
 	"github.com/himarnoel/kite/internal/ledger"
 	"github.com/himarnoel/kite/internal/middleware"
+	"github.com/himarnoel/kite/internal/payout"
 	transaction "github.com/himarnoel/kite/internal/transactions"
 	"github.com/himarnoel/kite/internal/wallet"
 )
@@ -59,7 +60,7 @@ func SetupRoutes(r *gin.Engine, db *sql.DB) {
 
 	// CONVERSION
 	convRepo := conversion.NewRepository(db)
-	convService := conversion.NewService(convRepo, ledgerRepo, db)
+	convService := conversion.NewService(convRepo, ledgerRepo, txRepo, db)
 	convHandler := conversion.NewHandler(convService)
 	conversionRoutes := api.Group("/conversions")
 	conversionRoutes.Use(middleware.AuthMiddleware())
@@ -67,4 +68,14 @@ func SetupRoutes(r *gin.Engine, db *sql.DB) {
 		conversionRoutes.POST("/quote", convHandler.Quote)
 	conversionRoutes.POST("/execute", convHandler.Execute)
 }
+
+	// PAYOUT
+	payoutRepo := payout.NewRepository(db)
+	payoutService := payout.NewService(payoutRepo, ledgerRepo, txRepo, db)
+	payoutHandler := payout.NewHandler(payoutService)
+	payoutRoutes := api.Group("/payouts")
+	payoutRoutes.Use(middleware.AuthMiddleware())
+	{
+		payoutRoutes.POST("/", payoutHandler.Create)
+	}
 }

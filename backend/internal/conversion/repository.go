@@ -32,7 +32,7 @@ func (r *Repository) CreateQuote(ctx context.Context, q Quote) error {
 func (r *Repository) GetQuote(ctx context.Context, id string) (*Quote, error) {
 	query := `
 	SELECT id, user_id, from_currency, to_currency, rate, amount_in, amount_out, fee, expires_at, created_at
-	FROM conversion_quotes WHERE id = $1
+	FROM conversions WHERE id = $1
 	`
 
 	var q Quote
