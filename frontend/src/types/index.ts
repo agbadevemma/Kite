@@ -23,13 +23,13 @@ export interface Wallet {
 
 export interface Quote {
   id: string;
-  sourceCurrency: Currency;
-  targetCurrency: Currency;
-  sourceAmount: number;
-  targetAmount: number;
+  from_currency: Currency;
+  to_currency: Currency;
+  amount_in: number;
+  amount_out: number;
   rate: number;
   fee: number;
-  expiresAt: string; // ISO
+  expires_at: string; // ISO
 }
 
 export type TxType = "deposit" | "conversion" | "payout";
@@ -41,7 +41,7 @@ export interface Transaction {
   status: TxStatus;
   amount: number;
   currency: Currency;
-  createdAt: string;
+  created_at: string;
   meta?: Record<string, unknown>;
 }
 

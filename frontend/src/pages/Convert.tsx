@@ -18,7 +18,7 @@ export default function Convert() {
   const [quote, setQuote] = useState<Quote | null>(null);
 
   const qc = useQueryClient();
-  const countdown = useCountdown(quote?.expiresAt);
+  const countdown = useCountdown(quote?.expires_at);
 
   const {
     register,
@@ -47,6 +47,8 @@ export default function Convert() {
     onError: (err) => toast.error(extractApiError(err, "Could not fetch quote")),
   });
 
+
+  
   const executeMutation = useMutation({
     mutationFn: () => conversionsApi.executeConversion(quote!.id),
     onSuccess: () => {
@@ -167,13 +169,13 @@ export default function Convert() {
           </div>
 
           <div className="rounded-lg bg-muted/50 p-4 space-y-2">
-            <Row label="You send" value={formatMoney(quote.sourceAmount, quote.sourceCurrency)} />
-            <Row label="You receive" value={formatMoney(quote.targetAmount, quote.targetCurrency)} highlight />
+            <Row label="You send" value={formatMoney(quote.amount_in, quote.from_currency)} />
+            <Row label="You receive" value={formatMoney(quote.amount_out, quote.to_currency)} highlight />
             <Row
               label="Rate"
-              value={`1 ${quote.sourceCurrency} = ${quote.rate.toFixed(4)} ${quote.targetCurrency}`}
+              value={`1 ${quote.from_currency} = ${quote.rate} ${quote.to_currency}`}
             />
-            <Row label="Fee" value={formatMoney(quote.fee, quote.sourceCurrency)} />
+            <Row label="Fee" value={formatMoney(quote.fee, quote.from_currency)} />
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2">

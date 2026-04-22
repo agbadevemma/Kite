@@ -28,10 +28,12 @@ export default function Deposit() {
 
   const currency = watch('currency');
   const amount = watch('amount');
+const idempotencyKey = crypto.randomUUID();
+console.log(idempotencyKey);
 
   const mutation = useMutation({
     mutationFn: (values: DepositValues) =>
-      depositsApi.createDeposit(values.currency as Currency, values.amount),
+      depositsApi.createDeposit(values.currency as Currency, values.amount, idempotencyKey),
     onSuccess: (_d, values) => {
       toast.success('Deposit submitted');
       reset({

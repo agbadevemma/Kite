@@ -17,7 +17,7 @@ export function formatMoney(amount: number, currency: Currency): string {
       maximumFractionDigits: 2,
     }).format(amount);
   } catch {
-    return `${currency} ${amount.toFixed(2)}`;
+    return `${currency} ${amount}`;
   }
 }
 

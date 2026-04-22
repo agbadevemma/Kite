@@ -56,7 +56,7 @@ export default function Transactions() {
                       {formatMoney(t.amount, t.currency)}
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{t.currency}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{formatDate(t.createdAt)}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{formatDate(t.created_at)}</td>
                   </tr>
                 ))}
               {query.data && query.data.data.length === 0 && (

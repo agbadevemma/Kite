@@ -14,13 +14,17 @@ func NewHandler(s *Service) *Handler {
 	return &Handler{service: s}
 }
 
+type ExecuteDTO struct {
+	QuoteID string `json:"quoteId" binding:"required"`
+}
+
 func (h *Handler) Quote(c *gin.Context) {
 
 	userID := c.GetString("userID")
 
 	var req struct {
-		From   string `json:"from_currency" binding:"required"`
-		To     string `json:"to_currency" binding:"required"`
+		From   string `json:"sourceCurrency" binding:"required"`
+		To     string `json:"targetCurrency" binding:"required"`
 		Amount int64  `json:"amount" binding:"required"`
 	}
 
@@ -40,7 +44,7 @@ func (h *Handler) Quote(c *gin.Context) {
 
 func (h *Handler) Execute(c *gin.Context) {
 
-	var req ExecuteRequest
+	var req ExecuteDTO
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "quote_id required"})
@@ -48,6 +52,7 @@ func (h *Handler) Execute(c *gin.Context) {
 	}
 
 	err := h.service.Execute(c.Request.Context(), req.QuoteID)
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

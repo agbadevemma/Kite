@@ -114,7 +114,7 @@ console.log(txs?.data?.data);
                     </span>
                     <div className="min-w-0">
                       <div className="text-sm font-medium capitalize truncate">{t.type}</div>
-                      <div className="text-xs text-muted-foreground">{formatDate(t.createdAt)}</div>
+                      <div className="text-xs text-muted-foreground">{formatDate(t.created_at)}</div>
                     </div>
                   </div>
                   <div className="text-right">

@@ -23,8 +23,8 @@ export const walletApi = {
 
 
 export const depositsApi = {
-  createDeposit: (currency: Currency, amount: number) =>
-    api.post<Transaction>("/deposits", { currency, amount }).then((r) => r.data),
+  createDeposit: (currency: Currency, amount: number, idempotency_key: string) =>
+    api.post<Transaction>("/deposits", { currency, amount, idempotency_key }).then((r) => r.data),
 };
 
 export const conversionsApi = {
