@@ -11,7 +11,7 @@ import (
 	"github.com/himarnoel/kite/internal/ledger"
 	"github.com/himarnoel/kite/internal/middleware"
 	"github.com/himarnoel/kite/internal/payout"
-	transaction "github.com/himarnoel/kite/internal/transactions"
+	"github.com/himarnoel/kite/internal/transactions"
 	"github.com/himarnoel/kite/internal/wallet"
 )
 

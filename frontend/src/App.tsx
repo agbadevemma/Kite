@@ -53,7 +53,7 @@ function App() {
                 }
               />
               <Route
-                path="/payout"
+                path="/payout"  
                 element={
                   <ProtectedRoute>
                     <Payout />

@@ -5,11 +5,13 @@ import (
 
 	"github.com/joho/godotenv"
 
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/himarnoel/kite/internal/db"
+	"github.com/himarnoel/kite/internal/middleware"
 	"github.com/himarnoel/kite/internal/routes"
-	"github.com/gin-contrib/cors"
-	"time"
 )
 
 func main() {
@@ -27,7 +29,7 @@ func main() {
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
-	}))
+	}), middleware.RateLimitMiddleware())
 
 	routes.SetupRoutes(r, database)
 
