@@ -20,36 +20,92 @@ The system is designed with financial correctness in mind where the ledger acts 
 
 # Running the Project
 
+Here’s a clean, professional version you can send:
+
+---
+
 ## Requirements
 
-* Docker
-* Docker Compose
+I was unable to set up Docker on my local machine, so I proceeded to deploy the project instead.
 
----
+**Live Demo:**
+[https://kite-frontend-di8t.onrender.com](https://kite-frontend-di8t.onrender.com)
 
-## Start the application
+## To run locally
 
-```bash id="r1"
-docker compose up --build
+If you'd like to run the project on a local machine:
+
+### Backend
+
+1. Install dependencies:
+
+```bash
+go mod download
 ```
 
-This starts:
+2. Set up environment variables:
 
-* Go API server
-* PostgreSQL database
+```env
+PORT=8080
+DATABASE_URL=postgres://postgres:password@localhost:5432/kite?sslmode=disable
+JWT_SECRET=supersecret
+```
+
+3. Run the server:
+
+```bash
+air
+```
 
 ---
 
-## Environment Variables
+### Frontend
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start development server:
+
+```bash
+npm run dev
+```
+
+3. Open:
+
+```text
+http://localhost:5173
+```
+
+---
+
+If you want, I can also help you rewrite this to sound more “production-grade” or more impressive for a hiring team.
+
+
+
+
+## Environment Variables For Backend
 
 Create a `.env` file:
 
 ```env id="r2"
-PORT=8080
+PORT=
 
-DATABASE_URL=postgres://postgres:password@db:5432/kite?sslmode=disable
+DATABASE_URL=
 
-JWT_SECRET=supersecret
+JWT_SECRET=
+```
+
+
+## Environment Variables For Frontend
+
+Create a `.env` file:
+
+```env id="r2"
+VITE_API_BASE_URL=
+
 ```
 
 ---
