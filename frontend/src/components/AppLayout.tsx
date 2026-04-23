@@ -25,7 +25,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             className="flex items-center gap-2 font-semibold text-lg"
           >
             <span className="grid size-8 place-items-center rounded-md bg-primary text-primary-foreground">
-              ₲
+             K
             </span>
             <span>Kite</span>
           </button>

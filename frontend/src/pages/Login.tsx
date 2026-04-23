@@ -40,7 +40,7 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <div className="mx-auto grid size-12 place-items-center rounded-xl bg-primary text-primary-foreground text-xl font-bold">
-            ₲
+           K
           </div>
           <h1 className="mt-4 text-2xl font-semibold">Welcome back</h1>
           <p className="text-sm text-muted-foreground">Sign in to your wallet</p>
