@@ -16,10 +16,10 @@ func NewHandler(s *Service) *Handler {
 }
 
 type CreatePayoutDTO struct {
-	Currency       string `json:"currency" binding:"required"`
-	Amount         int64  `json:"amount" binding:"required"`
-	Destination    string `json:"destination" binding:"required"`
-	IdempotencyKey string `json:"idempotency_key" binding:"required"`
+	Currency       string  `json:"currency" binding:"required"`
+	Amount         float64 `json:"amount" binding:"required"`
+	Destination    string  `json:"destination" binding:"required"`
+	IdempotencyKey string  `json:"idempotency_key" binding:"required"`
 }
 
 func (h *Handler) Create(c *gin.Context) {

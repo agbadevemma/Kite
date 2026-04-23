@@ -7,17 +7,17 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/himarnoel/kite/internal/ledger"
 	"github.com/himarnoel/kite/internal/db"
- "github.com/himarnoel/kite/internal/transactions"
+	"github.com/himarnoel/kite/internal/ledger"
+	"github.com/himarnoel/kite/internal/money"
+	 "github.com/himarnoel/kite/internal/transactions"
 )
 
 type Service struct {
-	db         *sql.DB
-	repo       *Repository
-	ledger     ledger.LedgerWriter
-	txWriter   transaction.TransactionWriter
-
+	db       *sql.DB
+	repo     *Repository
+	ledger   ledger.LedgerWriter
+	txWriter transaction.TransactionWriter
 }
 
 func NewService(db *sql.DB, r *Repository, l ledger.LedgerWriter, t transaction.TransactionWriter) *Service {
@@ -32,25 +32,28 @@ func NewService(db *sql.DB, r *Repository, l ledger.LedgerWriter, t transaction.
 type Request struct {
 	UserID         string
 	Currency       string
-	Amount         int64
+	Amount         float64
 	IdempotencyKey string
 }
 
 func (s *Service) Create(ctx context.Context, req Request) error {
 
-	if req.Amount <= 0 {
+	amount := money.ToSmallestUnit(
+		req.Amount,
+		req.Currency,
+	)
+	
+	if amount <= 0 {
 		return errors.New("amount must be greater than zero")
 	}
 
-	
 	existing, err := s.repo.GetByIdempotencyKey(ctx, req.IdempotencyKey)
 	if err != nil {
 		return err
 	}
 	if existing != nil {
-		return nil 
+		return nil
 	}
-
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -60,12 +63,11 @@ func (s *Service) Create(ctx context.Context, req Request) error {
 
 	depositID := uuid.NewString()
 
-	
 	err = s.repo.Create(ctx, tx, Deposit{
 		ID:             depositID,
 		UserID:         req.UserID,
 		Currency:       req.Currency,
-		Amount:         req.Amount,
+		Amount:         amount,
 		IdempotencyKey: req.IdempotencyKey,
 	})
 	if err != nil {
@@ -80,7 +82,7 @@ func (s *Service) Create(ctx context.Context, req Request) error {
 			ID:        uuid.NewString(),
 			UserID:    req.UserID,
 			Currency:  req.Currency,
-			Amount:    req.Amount,
+			Amount:    amount,
 			Type:      "credit",
 			RefType:   "deposit",
 			RefID:     depositID,
@@ -97,13 +99,12 @@ func (s *Service) Create(ctx context.Context, req Request) error {
 		Type:     "deposit",
 		Status:   "completed",
 		Currency: req.Currency,
-		Amount:   req.Amount,
+		Amount:   amount,
 		RefID:    depositID,
 	})
 	if err != nil {
 		return err
 	}
-
 
 	return tx.Commit()
 }

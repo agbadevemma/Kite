@@ -1,4 +1,3 @@
-
 package payout
 
 import (
@@ -10,7 +9,8 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/himarnoel/kite/internal/ledger"
-	"github.com/himarnoel/kite/internal/transactions"
+	"github.com/himarnoel/kite/internal/money"
+	transaction "github.com/himarnoel/kite/internal/transactions"
 )
 
 type Service struct {
@@ -37,8 +37,12 @@ func NewService(
 func (s *Service) Create(
 	ctx context.Context,
 	userID string,
-	req CreatePayoutDTO	,
+	req CreatePayoutDTO,
 ) error {
+	amount := money.ToSmallestUnit(
+		req.Amount,
+		req.Currency,
+	)
 
 	balance, err := s.ledgerWriter.GetBalance(
 		ctx,
@@ -49,7 +53,7 @@ func (s *Service) Create(
 		return err
 	}
 
-	if balance < req.Amount {
+	if balance < amount {
 		return errors.New("insufficient balance")
 	}
 
@@ -65,7 +69,7 @@ func (s *Service) Create(
 		ID:             payoutID,
 		UserID:         userID,
 		Currency:       req.Currency,
-		Amount:         req.Amount,
+		Amount:         amount,
 		Destination:    req.Destination,
 		Status:         "completed",
 		IdempotencyKey: req.IdempotencyKey,
@@ -81,7 +85,7 @@ func (s *Service) Create(
 		Type:     "payout",
 		Status:   "completed",
 		Currency: req.Currency,
-		Amount:   req.Amount,
+		Amount:   amount,
 		RefID:    payoutID,
 	})
 	if err != nil {
@@ -96,7 +100,7 @@ func (s *Service) Create(
 				ID:        uuid.NewString(),
 				UserID:    userID,
 				Currency:  req.Currency,
-				Amount:    req.Amount,
+				Amount:    amount,
 				Type:      "debit",
 				RefType:   "payout",
 				RefID:     payoutID,

@@ -9,8 +9,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+
 	"github.com/himarnoel/kite/internal/ledger"
-	 "github.com/himarnoel/kite/internal/transactions"
+	"github.com/himarnoel/kite/internal/money"
+	transaction "github.com/himarnoel/kite/internal/transactions"
 )
 
 type Service struct {
@@ -20,7 +22,12 @@ type Service struct {
 	db                *sql.DB
 }
 
-func NewService(r *Repository, lw ledger.LedgerWriter, tw transaction.TransactionWriter, db *sql.DB) *Service {
+func NewService(
+	r *Repository,
+	lw ledger.LedgerWriter,
+	tw transaction.TransactionWriter,
+	db *sql.DB,
+) *Service {
 	return &Service{
 		repo:              r,
 		ledgerWriter:      lw,
@@ -29,51 +36,81 @@ func NewService(r *Repository, lw ledger.LedgerWriter, tw transaction.Transactio
 	}
 }
 
-func (s *Service) Quote(ctx context.Context, userID, from, to string, amount int64) (*Quote, error) {
+func (s *Service) Quote(
+	ctx context.Context,
+	userID,
+	from,
+	to string,
+	amount float64,
+) (*Quote, error) {
 
 	if from == to {
 		return nil, errors.New("invalid conversion pair")
 	}
+
+	amountInSmallestUnit := money.ToSmallestUnit(
+		amount,
+		from,
+	)
 
 	balance, err := s.ledgerWriter.GetBalance(
 		ctx,
 		userID,
 		from,
 	)
-	log.Println("Retrieved balance:", balance)
-
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("Checking if balance is sufficient for conversion:", amount)
 
-	if balance < amount {
-		return nil, errors.New("insufficient balance")
-	}
+	log.Println(
+		"Checking conversion balance:",
+		balance,
+		"required:",
+		amountInSmallestUnit,
+	)
+	
+	if balance < amountInSmallestUnit {
+	return nil, errors.New("insufficient balance")
+}
+
+
 	rate := GetRate(from, to)
 
 	spread := 0.01
 	finalRate := rate * (1 + spread)
 
-	out := float64(amount) * finalRate
-	fee := int64(math.Round(out * 0.01))
+	amountMajor := float64(amountInSmallestUnit) / 100
+	convertedMajor := amountMajor * finalRate
+	feeMajor := convertedMajor * 0.01
+	amountOutMajor := convertedMajor - feeMajor
+
+	amountOut := int64(math.Round(amountOutMajor * 100))
+	fee := int64(math.Round(feeMajor * 100))
+
 
 	quote := &Quote{
 		ID:           uuid.NewString(),
 		UserID:       userID,
 		FromCurrency: from,
 		ToCurrency:   to,
-		Rate:         finalRate,
-		AmountIn:     amount,
-		AmountOut:    int64(out) - fee,
-		Fee:          fee,
-		ExpiresAt:    time.Now().Add(60 * time.Second),
-		CreatedAt:    time.Now(),
+
+		Rate: finalRate,
+
+		// stored in smallest units
+		AmountIn: amountInSmallestUnit,
+
+		// stored in smallest units
+		AmountOut: amountOut,
+
+		// stored in smallest units
+		Fee: fee,
+
+		ExpiresAt: time.Now().Add(60 * time.Second),
+		CreatedAt: time.Now(),
 	}
 
 	err = s.repo.CreateQuote(ctx, *quote)
-
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +118,10 @@ func (s *Service) Quote(ctx context.Context, userID, from, to string, amount int
 	return quote, nil
 }
 
-func (s *Service) Execute(ctx context.Context, quoteID string) error {
+func (s *Service) Execute(
+	ctx context.Context,
+	quoteID string,
+) error {
 
 	quote, err := s.repo.GetQuote(ctx, quoteID)
 	if err != nil {
@@ -97,15 +137,15 @@ func (s *Service) Execute(ctx context.Context, quoteID string) error {
 		quote.UserID,
 		quote.FromCurrency,
 	)
-	log.Println("Retrieved balance:", balance)
-
 	if err != nil {
 		return err
 	}
-	log.Println("Checking if balance is sufficient for conversion:", quote.AmountIn)
 
-	totalAmount := quote.AmountIn + quote.Fee
-	if balance < totalAmount {
+	// user pays amount_in only
+	// fee already deducted from amount_out
+	requiredBalance := quote.AmountIn
+
+	if balance < requiredBalance {
 		return errors.New("insufficient balance")
 	}
 
@@ -116,16 +156,23 @@ func (s *Service) Execute(ctx context.Context, quoteID string) error {
 	defer tx.Rollback()
 
 	txRecord := transaction.TransactionRecord{
-		ID:       uuid.NewString(),
-		UserID:   quote.UserID,
-		Type:     "conversion",
-		Status:   "completed",
+		ID:     uuid.NewString(),
+		UserID: quote.UserID,
+		Type:   "conversion",
+		Status: "completed",
+
 		Currency: quote.FromCurrency,
-		Amount:   totalAmount,
-		RefID:    quote.ID,
+
+		Amount: quote.AmountIn,
+
+		RefID: quote.ID,
 	}
 
-	err = s.transactionWriter.Create(ctx, tx, txRecord)
+	err = s.transactionWriter.Create(
+		ctx,
+		tx,
+		txRecord,
+	)
 	if err != nil {
 		return err
 	}
@@ -142,18 +189,26 @@ func (s *Service) Execute(ctx context.Context, quoteID string) error {
 			CreatedAt: time.Now(),
 		},
 		{
-			ID:        uuid.NewString(),
-			UserID:    quote.UserID,
-			Currency:  quote.ToCurrency,
-			Amount:    quote.AmountOut,
-			Type:      "credit",
-			RefType:   "conversion",
-			RefID:     quote.ID,
+			ID:       uuid.NewString(),
+			UserID:   quote.UserID,
+			Currency: quote.ToCurrency,
+
+			Amount: quote.AmountOut,
+
+			Type: "credit",
+
+			RefType: "conversion",
+			RefID:   quote.ID,
+
 			CreatedAt: time.Now(),
 		},
 	}
 
-	err = s.ledgerWriter.InsertEntries(ctx, tx, entries)
+	err = s.ledgerWriter.InsertEntries(
+		ctx,
+		tx,
+		entries,
+	)
 	if err != nil {
 		return err
 	}

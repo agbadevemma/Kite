@@ -381,3 +381,8 @@ The system enforces:
 | POST   | `/conversions/execute` | Execute conversion |
 | POST   | `/payouts`             | Create payout      |
 | GET    | `/transactions`        | List transactions  |
+
+
+## 🎥 Video Demo
+
+[![Watch Demo](https://img.shields.io/badge/Watch%20Video-Click%20Here-red?style=for-the-badge)](https://www.tella.tv/video/app-financial-workflow-demo-4utp)

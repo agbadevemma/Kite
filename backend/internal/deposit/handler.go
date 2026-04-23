@@ -16,7 +16,7 @@ func NewHandler(s *Service) *Handler {
 
 type createDTO struct {
 	Currency       string `json:"currency" binding:"required"`
-	Amount         int64  `json:"amount" binding:"required"`
+	Amount         float64 `json:"amount" binding:"required"`
 	IdempotencyKey string `json:"idempotency_key" binding:"required"`
 }
 

@@ -25,7 +25,7 @@ func (h *Handler) Quote(c *gin.Context) {
 	var req struct {
 		From   string `json:"sourceCurrency" binding:"required"`
 		To     string `json:"targetCurrency" binding:"required"`
-		Amount int64  `json:"amount" binding:"required"`
+		Amount float64  `json:"amount" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
